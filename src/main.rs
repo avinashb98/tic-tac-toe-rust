@@ -7,15 +7,17 @@ fn main() {
     let mut current_player = 'x';
     let mut row:usize;
     let mut col:usize;
+    let mut message: String = "".to_string();
     loop {
         cls();
         print_board(board);
+        println!("{}", message);
         println!("Current Player: {}", current_player);
         let mut input_row: String;
         loop {
             input_row = rprompt::prompt_reply_stdout("Enter Row: ").unwrap();
             if !is_valid_input(&input_row) {
-                println!("Invalid Row. Acceptable Values: 0, 1, 2");
+                message = "Invalid Row. Acceptable Values: 0, 1, 2".to_string();
                 continue;
             }
             row = input_row.to_string().parse().unwrap();
@@ -25,7 +27,7 @@ fn main() {
         loop {
             input_col = rprompt::prompt_reply_stdout("Enter Column: ").unwrap();
             if !is_valid_input(&input_col) {
-                println!("Invalid Col. Acceptable Values: 0, 1, 2");
+                message = "Invalid Col. Acceptable Values: 0, 1, 2".to_string();
                 continue;
             }
             col = input_col.parse().unwrap();
@@ -33,7 +35,7 @@ fn main() {
         }
 
         if !is_valid_entry(row, col, board) {
-            println!("Spot already filled. Enter a different spot.");
+            message = "Spot already filled. Enter a different spot.".to_string();
             continue;
         }
 
@@ -53,6 +55,14 @@ fn main() {
             println!("{} Won", winner);
             break;
         }
+
+        if is_drawn(board) {
+            cls();
+            print_board(board);
+            println!("Game Drawn");
+            break;
+        }
+
     }
 }
 
@@ -111,6 +121,17 @@ fn get_winner(board:Board) -> char {
         }
     }
     return 'n';
+}
+
+fn is_drawn(board:Board) ->bool {
+    for i in 0..3 {
+        for j in 0..3 {
+            if board[i][j] == ' ' {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 fn cls() {
